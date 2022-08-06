@@ -6,7 +6,6 @@ export default class Searchbar extends Component{
 
     passValue=(e)=>{
         e.preventDefault();
-        console.log('Спрацював сабміт форми');
         this.props.onSubmit(e.target[1].value)
     }
 

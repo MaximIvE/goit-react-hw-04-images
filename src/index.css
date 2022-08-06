@@ -29,13 +29,14 @@ code {
 
 /* p, h1, h2, h3{
   margin: 0;
-}
+} */
 
 ul {
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   padding: 0;
   list-style: none;
-} */
+}
 
 img {
   display: block;
@@ -43,15 +44,14 @@ img {
   height: auto;
 }
 
-/* button {
-  Делает из строчного элемента строчно-блочный чтоб задать вертикальные паддинги
+button {
+  /* Делает из строчного элемента строчно-блочный чтоб задать вертикальные паддинги */
   display: inline-block;  
-  font-family: Roboto;
-  border-radius: 4px;
-  Убирает рамку
+  border-radius: 2px;
+  /* Убирает рамку */
   border: transparent; 
   cursor: pointer;
-} */
+}
 
 /* li {
   text-decoration: none;
