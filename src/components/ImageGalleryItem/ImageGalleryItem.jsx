@@ -1,4 +1,5 @@
 import { Item, Img } from './ImageGalleryItem.styled';
+import PropTypes from 'prop-types';
 
 export default function ImageGalleryItem(props){
     const {src, alt, dataSource, onModal}=props;
@@ -10,4 +11,11 @@ export default function ImageGalleryItem(props){
             <Img src={src} alt={alt} data-source={dataSource}/>
         </Item>
     )
-}
+};
+
+ImageGalleryItem.propTypes = {
+    src: PropTypes.string.isRequired,
+    alt: PropTypes.string.isRequired,
+    dataSource: PropTypes.string.isRequired,
+    onModal: PropTypes.func.isRequired,
+};

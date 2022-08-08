@@ -9,6 +9,7 @@ import imgApiService from 'utils/imgService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 export default class App extends Component{
   state={
     searchQuery: '',
@@ -55,7 +56,7 @@ export default class App extends Component{
   onSubmit = (valueInput) => {
     if(valueInput.trim() === ""){return toast.warn("Введіть дані для пошуку.")};
     if (this.state.searchQuery !== valueInput){
-    this.setState({searchQuery: valueInput, showloader: true,})
+    this.setState({searchQuery: valueInput, showloader: true, showBtnMore: false})
     }
   }
 
@@ -80,15 +81,7 @@ export default class App extends Component{
         {showloader && <Loader/>}
         {showBtnMore && <Button loadMore={this.loadMore}/>}
          
-        <ToastContainer position="top-right"
-            autoClose={2700}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover/>
+        <ToastContainer position="top-right" autoClose={2700} />
       </Contanier>
     )
   }
