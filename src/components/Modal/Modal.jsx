@@ -8,11 +8,13 @@ export default class Modal extends Component{
     //Цей метод запускається, коли модальне вікно монтується
     componentDidMount(){
         window.addEventListener('keydown', this.closeModalEsc);
+        document.documentElement.style.overflow='hidden';
     }
 
     //Цей метод запускається, коли модалка розмонтується
     componentWillUnmount(){
         window.removeEventListener('keydown', this.closeModalEsc);
+        document.documentElement.style.overflow=null;
     }
 
     closeModalEsc = (e) => {
@@ -26,10 +28,10 @@ export default class Modal extends Component{
     }
 
     render(){
+        const {children} = this.props;
         return createPortal(<Overlay onClick={this.closeModalBackdrop}>
             <ModalContetn >
-                <img src="" alt="" />
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Id, facilis error cumque harum, et illum maxime itaque reprehenderit aliquam esse qui repellat impedit sequi obcaecati dolores consectetur ullam possimus asperiores.</p>
+                {children}
             </ModalContetn>
         </Overlay>, modalRoot);
     }

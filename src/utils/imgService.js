@@ -18,7 +18,6 @@ export default async function imgApiService(searchQuery, page, perPage){
 
     try {
         const response = await axios.get(url, options);
-        console.log(response.data);
         
         return response.data;
     } catch (error) {

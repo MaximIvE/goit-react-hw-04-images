@@ -9,13 +9,12 @@ export default class ImageGallery extends Component{
     }
     
 render(){
-    console.log(this.props.reply);
     const images=this.props.reply;
     if (images.length === 0){return}
 
     return (
         <Gallery>
-            {images.map(({id, webformatURL, largeImageURL})=>{return <ImageGalleryItem key ={id} src={webformatURL} alt={largeImageURL}/>})
+            {images.map(({id, webformatURL, largeImageURL, tags})=>{return <ImageGalleryItem onModal={this.props.onModal} key ={id} src={webformatURL} dataSource={largeImageURL} alt={tags}/>})
             }
 
         </Gallery>
