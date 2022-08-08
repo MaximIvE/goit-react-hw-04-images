@@ -16,4 +16,3 @@ export const Img = styled.img`
     cursor: zoom-in;
   }
 `;
-
