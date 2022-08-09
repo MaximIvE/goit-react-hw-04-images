@@ -70,13 +70,13 @@ export default class App extends Component{
   }
 
   render(){
-    const {data, showloader, showModal, showBtnMore, searchQuery} = this.state;
+    const {searchQuery, data, showloader, showModal, showBtnMore, showGallery} = this.state;
 
     return (
       <Contanier>
         {showModal && <Modal onClose={this.toggleModal}>{this.state.modalChildren}</Modal>}
         <Searchbar disable={showModal} value={searchQuery} onSubmit={this.onSubmit}/>
-        {this.state.showGallery && <ImageGallery reply={data} onModal={this.toggleModal}/>}
+        {showGallery && <ImageGallery reply={data} onModal={this.toggleModal}/>}
 
         {showloader && <Loader/>}
         {showBtnMore && <Button loadMore={this.loadMore}/>}

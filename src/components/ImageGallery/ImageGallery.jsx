@@ -7,8 +7,7 @@ import PropTypes from 'prop-types';
 export default class ImageGallery extends Component{
 
 render(){
-    const images=this.props.reply;
-    if (images.length === 0){return}
+    const images = this.props.reply;
 
     return (
         <Gallery>
