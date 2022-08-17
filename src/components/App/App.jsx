@@ -1,88 +1,99 @@
-import { Component,} from 'react';
+import { useState, useEffect } from 'react';
 import { Contanier } from './App.styled';
 import Searchbar from 'components/Searchbar';
 import ImageGallery from 'components/ImageGallery';
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import Modal from 'components/Modal';
+import PreventionError from 'components/Error';
 import imgApiService from 'utils/imgService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-export default class App extends Component{
-  state={
-    searchQuery: '',
-    data: [],
-    showGallery: true,
-    showloader: false,
-    showModal: false,
-    showBtnMore: false,
-    page: 1,
-    modalChildren: null,
-    error: null,
-  }
 
-  per_page = 12;
+export default function App(){
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [data, setData] = useState([]);
+  const [showGallery, setShowGallery] = useState(true);
+  const [showloader, setShowloader] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showBtnMore, setShowBtnMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [modalChildren, setModalChildren] = useState(null);
+  const [error, setError] = useState(null);
+
+  const PER_PAGE = 12;
+  //При монтуванні 
+  useEffect(()=>{
+    
+    if (searchQuery){
+      requestServer(1, []);}
+  },[]);
+  
+  //При оновленні searchQuery
+  useEffect(()=>{
+    
+    if(!searchQuery){return};
+    setShowGallery(false);
+    requestServer(1, []);
+  },[searchQuery])
   
 
-  componentDidMount(){
-    if (this.state.searchQuery){
-      this.requestServer(1, []);}
-  }
-  
-  //Запускається, коли App змінюється
-  componentDidUpdate(_, prevState){
-    if (prevState.searchQuery !== this.state.searchQuery){
-      this.setState({showGallery: false});
-      this.requestServer(1, []);}
-}
-
-  requestServer(page, prevData){
+  function requestServer(page, prevData){
     const newPage = page || 1;
-    this.setState({showloader: true});
-    imgApiService(this.state.searchQuery, page, this.per_page).then(responce => { 
-      let showBtnmore = false;
-      if((responce.total / this.per_page) >= this.state.page){showBtnmore = true}
-      this.setState({data: [...prevData, ...responce.hits],  showBtnMore: showBtnmore, showGallery: true, page: newPage, error: null})}
-      )
+    setShowloader(true);
+    
+    imgApiService(searchQuery, page, PER_PAGE).then(responce => { 
+      let showBtn = false;
+      if((responce.total / PER_PAGE) >= (page+1)){showBtn = true};
+      setData([...prevData, ...responce.hits]);
+      setShowBtnMore(showBtn);
+      setShowGallery(true);
+      setPage(newPage);
+      setError(null);
+      })
       .catch(error=>{ 
-        toast.error(error.message);
-        return this.setState({error: error.message})})
-      .finally(this.setState({showloader: false}));
+        return setError(error.message)})
+      .finally(setShowloader(false));
   }
   
   // цей метод визивається під час сабміту форми (натискання кнопки пошук)
-  onSubmit = (valueInput) => {
+  const onSubmit = (valueInput) => {
     if(valueInput.trim() === ""){return toast.warn("Введіть дані для пошуку.")};
-    if (this.state.searchQuery !== valueInput){
-    this.setState({searchQuery: valueInput, showloader: true, showBtnMore: false})
+    if (searchQuery !== valueInput){
+      setSearchQuery(valueInput);
+      setShowloader(true);
+      setShowBtnMore(false);
     }
   }
 
-  loadMore=()=>{
-    this.requestServer(this.state.page+1, this.state.data);
+  const loadMore=()=>{
+    requestServer(page+1, data);
   }
 
-  toggleModal = (children) => {
+  const toggleModal = (children) => {
     const newChildren = children || "";
-    this.setState(({showModal}) => ({showModal: !showModal, modalChildren: newChildren,}))
+    setShowModal(showModal=>!showModal);
+    setModalChildren(newChildren);
   }
-
-  render(){
-    const {searchQuery, data, showloader, showModal, showBtnMore, showGallery} = this.state;
 
     return (
       <Contanier>
-        {showModal && <Modal onClose={this.toggleModal}>{this.state.modalChildren}</Modal>}
-        <Searchbar disable={showModal} value={searchQuery} onSubmit={this.onSubmit}/>
-        {showGallery && <ImageGallery reply={data} onModal={this.toggleModal}/>}
 
+        {showModal && <Modal onClose={toggleModal}>{modalChildren}</Modal>}
+        <Searchbar disable={showModal} value={searchQuery} onSubmit={onSubmit}/>
+
+        <PreventionError message={error} query={searchQuery}>
+          {showGallery && <ImageGallery reply={data} onModal={toggleModal}/>}
+        </PreventionError>
+        
+        
         {showloader && <Loader/>}
-        {showBtnMore && <Button loadMore={this.loadMore}/>}
+        {showBtnMore && <Button loadMore={loadMore}/>}
          
         <ToastContainer position="top-right" autoClose={2700} />
       </Contanier>
     )
-  }
 };

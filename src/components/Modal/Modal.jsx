@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from "react";
 import { createPortal } from 'react-dom';
 import { Overlay, ModalContetn } from './Modal.styled';
 import PropTypes from 'prop-types';
@@ -6,38 +6,38 @@ import PropTypes from 'prop-types';
 
 const modalRoot = document.querySelector('#modal-root');
 
-export default class Modal extends Component{
+const Modal=(props)=>{
     //Цей метод запускається, коли модальне вікно монтується
-    componentDidMount(){
-        window.addEventListener('keydown', this.closeModalEsc);
+    useEffect(()=>{
+        window.addEventListener('keydown', closeModalEsc);
         document.documentElement.style.overflow='hidden';
-    }
 
-    //Цей метод запускається, коли модалка розмонтується
-    componentWillUnmount(){
-        window.removeEventListener('keydown', this.closeModalEsc);
-        document.documentElement.style.overflow=null;
-    }
+        return ()=>{
+            //Коли модалка розмонтовується
+            window.removeEventListener('keydown', closeModalEsc);
+            document.documentElement.style.overflow=null;
+        }
+    },[]);
 
-    closeModalEsc = (e) => {
+    const closeModalEsc = (e) => {
         if(e.code === 'Escape'){
-            this.props.onClose();
+            props.onClose();
         }
     }
 
-    closeModalBackdrop = (e) =>{
-        if(e.target === e.currentTarget){ this.props.onClose()}
+    const closeModalBackdrop = (e) =>{
+        if(e.target === e.currentTarget){ props.onClose()}
     }
 
-    render(){
-        const {children} = this.props;
-        return createPortal(<Overlay onClick={this.closeModalBackdrop}>
-            <ModalContetn >
-                {children}
-            </ModalContetn>
-        </Overlay>, modalRoot);
-    }
+    const {children} = props;
+    return createPortal(<Overlay onClick={closeModalBackdrop}>
+        <ModalContetn >
+            {children}
+        </ModalContetn>
+    </Overlay>, modalRoot);
 };
+
+export default Modal;
 
 Modal.propTypes = {
     onClose: PropTypes.func.isRequired,

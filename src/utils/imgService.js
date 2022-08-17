@@ -18,12 +18,13 @@ export default async function imgApiService(searchQuery, page, perPage){
 
     try {
         const response = await axios.get(url, options);
+        // const response = null;
         if(response.data.total === 0){
             return Promise.reject(new Error(`По запиту ${searchQuery} нічого не знайдено.`))
         }
         return response.data;
         
     } catch (error) {
-        return Promise.reject(new Error("Щось пішло не так о_O"));
+        return Promise.reject(new Error('Other'));
     }
 }
