@@ -17,7 +17,7 @@ const Modal=(props)=>{
             window.removeEventListener('keydown', closeModalEsc);
             document.documentElement.style.overflow=null;
         }
-    },[]);
+    });
 
     const closeModalEsc = (e) => {
         if(e.code === 'Escape'){

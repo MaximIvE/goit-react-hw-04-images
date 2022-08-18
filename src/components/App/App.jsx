@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 let firstRunApp = 1;
 export default function App(){
-  const [searchQuery, setSearchQuery] = useState("memo");
+  const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [showGallery, setShowGallery] = useState(true);
   const [showloader, setShowloader] = useState(false);
