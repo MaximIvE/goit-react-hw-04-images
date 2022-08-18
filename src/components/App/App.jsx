@@ -10,11 +10,9 @@ import imgApiService from 'utils/imgService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-
+let firstRunApp = 1;
 export default function App(){
-  
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("memo");
   const [data, setData] = useState([]);
   const [showGallery, setShowGallery] = useState(true);
   const [showloader, setShowloader] = useState(false);
@@ -25,12 +23,12 @@ export default function App(){
   const [error, setError] = useState(null);
 
   const PER_PAGE = 12;
-  //При монтуванні 
-  useEffect(()=>{
-    
-    if (searchQuery){
-      requestServer(1, []);}
-  },[]);
+  //Виконається 1 раз при монтуванні компонента, якщо в стейті пошуковий запит не пустий.
+  if (firstRunApp === 1 && searchQuery){
+    firstRunApp +=1;
+    setShowGallery(false);
+    requestServer(1, []);}
+ 
   
   //При оновленні searchQuery
   useEffect(()=>{
@@ -57,7 +55,7 @@ export default function App(){
       .catch(error=>{ 
         return setError(error.message)})
       .finally(setShowloader(false));
-  }
+  };
   
   // цей метод визивається під час сабміту форми (натискання кнопки пошук)
   const onSubmit = (valueInput) => {

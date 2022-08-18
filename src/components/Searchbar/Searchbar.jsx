@@ -1,18 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Header,Form,SearchFormBtn,SpanBtn,Input } from "./Searchbar.styled";
 import PropTypes from 'prop-types';
 
 const Searchbar = (props) => {
-    const [value, setValue] = useState("");
-    
-    //При першому рендері комонента
-    useEffect(()=>{
-        //Якщо ми нове value прокидуємо зверху в пропсі, то його потрібно записати в стейт
-        if(value !== props.value){ 
-            const newValue = props.value;
-            setValue(newValue);
-        }
-    }, []);
+    const [value, setValue] = useState(props.value);
 
     const onSubmitForm=(e)=>{
         e.preventDefault();
