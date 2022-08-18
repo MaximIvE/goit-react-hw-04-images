@@ -10,65 +10,56 @@ import imgApiService from 'utils/imgService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-let firstRunApp = 1;
+
 export default function App(){
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [showGallery, setShowGallery] = useState(true);
-  const [showloader, setShowloader] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showBtnMore, setShowBtnMore] = useState(false);
   const [page, setPage] = useState(1);
   const [modalChildren, setModalChildren] = useState(null);
   const [error, setError] = useState(null);
-
+  const [showLoader, setLoader] = useState(false);
+  
+  //Пагінація, кількість карток
   const PER_PAGE = 12;
-  //Виконається 1 раз при монтуванні компонента, якщо в стейті пошуковий запит не пустий.
-  if (firstRunApp === 1 && searchQuery){
-    firstRunApp +=1;
-    setShowGallery(false);
-    requestServer(1, []);}
- 
   
-  //При оновленні searchQuery
+  //При оновленні searchQuery або page
   useEffect(()=>{
-    
     if(!searchQuery){return};
-    setShowGallery(false);
-    requestServer(1, []);
-  },[searchQuery])
-  
-
-  function requestServer(page, prevData){
-    const newPage = page || 1;
-    setShowloader(true);
-    
-    imgApiService(searchQuery, page, PER_PAGE).then(responce => { 
-      let showBtn = false;
-      if((responce.total / PER_PAGE) >= (page+1)){showBtn = true};
-      setData([...prevData, ...responce.hits]);
-      setShowBtnMore(showBtn);
-      setShowGallery(true);
-      setPage(newPage);
-      setError(null);
-      })
-      .catch(error=>{ 
-        return setError(error.message)})
-      .finally(setShowloader(false));
-  };
-  
+      setShowBtnMore(false);
+      imgApiService(searchQuery, page, PER_PAGE).then(responce => { 
+        let showBtn = false;
+        if((responce.total / PER_PAGE) >= (page+1)){showBtn = true};
+        setData(prevData => [...prevData, ...responce.hits]);
+        setShowBtnMore(showBtn);
+        setShowGallery(true);
+        // setPage(newPage);
+        setError(null);
+        setLoader(false);
+        })
+        .catch(error=>{ 
+          setLoader(false);
+          return setError(error.message)})
+  },[searchQuery,page]);
+ 
   // цей метод визивається під час сабміту форми (натискання кнопки пошук)
   const onSubmit = (valueInput) => {
     if(valueInput.trim() === ""){return toast.warn("Введіть дані для пошуку.")};
     if (searchQuery !== valueInput){
       setSearchQuery(valueInput);
-      setShowloader(true);
       setShowBtnMore(false);
+      setData([]);
+      setPage(1);
     }
-  }
+    setLoader(true);
+    setShowGallery(false);
+  };
 
   const loadMore=()=>{
-    requestServer(page+1, data);
+    setPage(page=>page+1);
+    setLoader(true);
   }
 
   const toggleModal = (children) => {
@@ -79,18 +70,16 @@ export default function App(){
 
     return (
       <Contanier>
-
-        {showModal && <Modal onClose={toggleModal}>{modalChildren}</Modal>}
         <Searchbar disable={showModal} value={searchQuery} onSubmit={onSubmit}/>
 
         <PreventionError message={error} query={searchQuery}>
-          {showGallery && <ImageGallery reply={data} onModal={toggleModal}/>}
+          {showGallery  && <ImageGallery reply={data} onModal={toggleModal}/>}
         </PreventionError>
         
-        
-        {showloader && <Loader/>}
+        {showLoader && <Loader/>}
         {showBtnMore && <Button loadMore={loadMore}/>}
          
+        {showModal &&  <Modal onClose={toggleModal}>{modalChildren}</Modal>}
         <ToastContainer position="top-right" autoClose={2700} />
       </Contanier>
     )
